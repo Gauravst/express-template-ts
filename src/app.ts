@@ -5,29 +5,37 @@ import cookieParser from 'cookie-parser';
 
 // module imports
 import { BASEPATH } from './constants';
-import { errorHandler } from './middlewares/error.middleware';
-import { ApiResponse } from './utils/ApiResponse';
-import { ApiError } from './utils/ApiError';
+import { errorHandler } from './middlewares/error';
+import { ApiResponse } from './utils/api-response';
+import { ApiError } from './utils/api-error';
 
 // router imports
-import authRouters from './routes/auth.routes.js';
+import authRouters from './routes/auth';
 
 // constants
 const app = express();
 
 // middlewares
+// app.use(
+//   cors({
+//     origin: process.env.CORS_ORIGIN,
+//     credentials: true,
+//   }),
+// );
+
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: true, // allow all origins (handle CORS using middleware)
     credentials: true,
   })
 );
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // test route
-app.get(`${BASEPATH}/healthcheck`, (req: Request, res: Response, next: NextFunction) => {
+app.get(`${BASEPATH}/healthcheck`, (_: Request, res: Response, next: NextFunction) => {
   try {
     return res.status(200).json(new ApiResponse(200, 'ok'));
   } catch (error) {
@@ -35,7 +43,6 @@ app.get(`${BASEPATH}/healthcheck`, (req: Request, res: Response, next: NextFunct
     next(new ApiError(500, (error as Error).message));
   }
 });
-
 
 // auth & user routes
 app.use(`${BASEPATH}/auth`, authRouters);

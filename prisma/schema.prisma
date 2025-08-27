@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// user
+model User {
+  id           String         @id @default(uuid())
+  email        String         @unique
+  password     String?
+  name         String?
+  role         Role           @default(USER)
+  strategy     String?
+  strategyId   String?
+  profilePic   String?
+  LoginSession LoginSession[]
+  ApiKey       ApiKey[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+// login sessions
+model LoginSession {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  token     String   @unique
+  userAgent String?
+  ip        String?
+  isActive  Boolean  @default(true)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+// api key for apis
+model ApiKey {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  key       String   @unique
+  name      String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
