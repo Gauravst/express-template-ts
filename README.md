@@ -1,6 +1,6 @@
 # Express TypeScript Template
 
-A simple starter template for building APIs with \*\*Express.js
+A simple starter template for building APIs with Express.js + TypeScript
 
 ## Features
 
